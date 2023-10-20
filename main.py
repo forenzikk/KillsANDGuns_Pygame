@@ -1,11 +1,11 @@
 import pygame
 import time
 from parametres import *
-
 from player_config import *
 import math
 from play_map import *
 from rays_geometry import *
+from drawings import *
 
 
 pygame.init()
@@ -19,7 +19,9 @@ bg_sound.play()
 
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
+screen_map = pygame.Surface((width // map_scale + 120, height // map_scale))
 player = Player()
+drawing = element_of_textures(screen, screen_map)
 
 font = pygame.font.Font(None, 36)
 
@@ -43,10 +45,9 @@ while True:
     player.movement()
     screen.fill((0, 0, 0))
 
-    pygame.draw.rect(screen, (40, 40, 40), (0, 0, width, (height // 2)))#небо
-    pygame.draw.rect(screen, (15, 15, 15), (0, (height // 2), width, (height // 2)))#земля
-
-    ray_casting(screen, player.get_position, player.angle) #настройка видимости игрока
+    drawing.background()
+    drawing.world(player.get_position, player.angle)
+    drawing.mini_map(player)
 
     pygame.display.flip()
     clock.tick(fps)
