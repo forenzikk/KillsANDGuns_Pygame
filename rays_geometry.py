@@ -6,13 +6,12 @@ from play_map import world_map
 def mapping(a, b):
     return (a // tile) * tile, (b // tile) * tile
 
-def ray_casting(screen, player_position, angle_of_player):
 
+def ray_casting(screen, player_position, angle_of_player, textures):
     xo, yo = player_position
     xn, yn = mapping(xo, yo)
-
     current_angle = angle_of_player - (field_of_wiev / 2)
-    for ray in range(count_of_rays):   #на каждый луч выстраиваем его косинус и синус,необходимо для грамотной видимости
+    for ray in range(count_of_rays):
         sin_a = math.sin(current_angle)
         cos_a = math.cos(current_angle)
 
@@ -26,42 +25,49 @@ def ray_casting(screen, player_position, angle_of_player):
         else:
             cos_a = 0.000001
 
-        #vertical
+        # verticals
         if cos_a >= 0:
-            x, dx = xn + tile, 1
+            x, dx = (xn + tile, 1)
         else:
-            x, dx = xn, -1
+            x, dx = (xn, -1)
 
         for i in range(0, width, tile):
             depth_vertical = (x - xo) / cos_a
-            y = yo + depth_vertical * sin_a
-            if mapping(x + dx, y) in world_map:
+            yv = yo + depth_vertical * sin_a
+            tile_vertical = mapping(x + dx, yv)
+            if tile_vertical in world_map:
+                texture_vertical = world_map[tile_vertical]
                 break
             x += dx * tile
 
-        #horizontal
+        # horizontals
         if sin_a >= 0:
-            y, dy = yn + tile, 1
+            y, dy = (yn + tile, 1)
         else:
-            y, dy = yn, -1
+            y, dy = (yn, -1)
 
         for i in range(0, height, tile):
-            depth_horizontal = (y - yo) / sin_a
-            x = xo + depth_horizontal * cos_a
-            if mapping(x, y + dy) in world_map:
+            depth_horisontal = (y - yo) / sin_a
+            xh = xo + depth_horisontal * cos_a
+            tile_horisontal = mapping(xh, y + dy)
+            if tile_horisontal in world_map:
+                texture_horisontal = world_map[tile_horisontal]
                 break
             y += dy * tile
 
-        #projection
-        if depth_vertical < depth_horizontal:
-            depth = depth_vertical
+        # projection
+        if depth_vertical < depth_horisontal:
+            depth, offset, texture = (depth_vertical, yv, texture_vertical)
         else:
-            depth = depth_horizontal
+            depth, offset, texture = (depth_horisontal, xh, texture_horisontal)
 
+        offset = int(offset) % tile
         depth *= math.cos(angle_of_player - current_angle)
-        proj_height = project_coeff / depth
-        c = 255 / (1 + depth * depth * 0.00002)#реализация затемнения стен
-        color = (c, c // 2, c // 3)
+        depth = max(depth, 0.00001)
+        proj_height = min(int(project_coeff / depth), 2 * height)
 
-        pygame.draw.rect(screen, color, (ray * scale, (height // 2) - proj_height // 2, scale, proj_height))
+        wall_column = textures[texture].subsurface(offset * texture_scale, 0, texture_scale, height_of_textures)
+        wall_column = pygame.transform.scale(wall_column, (scale, proj_height))
+        screen.blit(wall_column, (ray * scale, (height // 2) - proj_height // 2))
+
         current_angle += delta_angle

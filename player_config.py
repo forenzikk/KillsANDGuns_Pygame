@@ -4,7 +4,7 @@ import math
 
 class Player:
     def __init__(self):
-        self.x, self.y = player_pos
+        self.x, self.y = player_position
         self.angle = angle_of_player
 
     @property
