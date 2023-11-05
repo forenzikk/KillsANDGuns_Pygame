@@ -25,3 +25,7 @@ map_position = (0, height - height // map_scale - 640)
 width_of_textures = 1200
 height_of_textures = 1200
 texture_scale = width_of_textures // tile
+
+double_pi = math.pi * 2
+center_of_ray = count_of_rays // 2 - 1
+fake_rays = 100

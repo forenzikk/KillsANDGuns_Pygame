@@ -22,8 +22,11 @@ class elements_of_textures:
         self.screen.blit(self.textures['S'], (sky_offset - width, 0))
         self.screen.blit(self.textures['S'], (sky_offset + width, 0))
 
-    def world(self, player_position, angle_of_player):
-        ray_casting(self.screen, player_position, angle_of_player, self.textures)
+    def world(self, world_objects):
+        for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):
+            if obj[0]:
+                _, object, object_position = obj
+                self.screen.blit(object, object_position)
 
     def mini_map(self, player):
         self.screen_map.fill((0, 0, 0))

@@ -5,7 +5,8 @@ from player_config import Player
 import math
 from play_map import world_map
 from drawings import elements_of_textures
-
+from rays_geometry import ray_casting
+from sprites_obj import *
 
 def write_text(text):   #вывод текста перед игрой
     screen.fill((0, 0, 0))
@@ -32,6 +33,7 @@ clock = pygame.time.Clock()
 screen_map = pygame.Surface((width // map_scale, height // map_scale))
 player = Player()
 drawing = elements_of_textures(screen, screen_map)
+sprites = sprites()
 
 font = pygame.font.Font(None, 36)
 
@@ -45,7 +47,8 @@ while True:
     screen.fill((0, 0, 0))
 
     drawing.background(player.angle)
-    drawing.world(player.get_position, player.angle)
+    walls = ray_casting(player, drawing.textures)
+    drawing.world(walls + [obj.object_locate(player, walls) for obj in sprites.list_of_objects])
     drawing.mini_map(player)
 
     pygame.display.flip()
