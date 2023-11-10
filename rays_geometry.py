@@ -1,18 +1,19 @@
 import pygame
 from parametres import *
 from play_map import *
+from numba import njit
 
-
+@njit(fastmath=True)
 def mapping(a, b):
     return (a // tile) * tile, (b // tile) * tile
 
-
-def ray_casting(player, textures):
-    walls = []
-    xo, yo = player.get_position
+@njit(fastmath=True)
+def ray_casting(player_position, angle_of_player, world_map):
+    casted_walls = []
+    xo, yo = player_position
     texture_vertical, texture_horisontal = 1, 1
     xn, yn = mapping(xo, yo)
-    current_angle = player.angle - (field_of_wiev / 2)
+    current_angle = angle_of_player - (field_of_wiev / 2)
     for ray in range(count_of_rays):
         sin_a = math.sin(current_angle)
         cos_a = math.cos(current_angle)
@@ -65,14 +66,22 @@ def ray_casting(player, textures):
             depth, offset, texture = depth_h, xh, texture_horisontal
 
         offset = int(offset) % tile
-        depth *= math.cos(player.angle - current_angle)
+        depth *= math.cos(angle_of_player - current_angle)
         depth = max(depth, 0.00001)
         proj_height = min(int(project_coeff / depth), height * 5)
 
+        casted_walls.append((depth, offset, proj_height, texture))
+        current_angle += delta_angle
+    return casted_walls
+
+
+def ray_casting_walls(player, textures):
+    casted_walls = ray_casting(player.get_position, player.angle, world_map)
+    walls = []
+    for ray, casted_values in enumerate(casted_walls):
+        depth, offset, proj_height, texture = casted_values
         wall_column = textures[texture].subsurface(offset * texture_scale, 0, texture_scale, texture_height)
         wall_column = pygame.transform.scale(wall_column, (scale, proj_height))
         wall_pos = (ray * scale, (height // 2) - proj_height // 2)
-
         walls.append((depth, wall_column, wall_pos))
-        current_angle += delta_angle
     return walls

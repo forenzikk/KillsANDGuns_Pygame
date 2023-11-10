@@ -22,16 +22,16 @@ bg_sound.play()
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
 
-#instance of classes
-player = Player()
-drawing = Drawing(screen, screen_map)
+#instances of classes
 sprites = Sprites()
+player = Player(sprites)
+drawing = Drawing(screen, screen_map)
 
 font = pygame.font.Font(None, 36)
 
 sprites = Sprites()
 clock = pygame.time.Clock()
-player = Player()
+player = Player(sprites)
 drawing = Drawing(screen, screen_map)
 
 def write_text(text):   #вывод текста перед игрой
@@ -54,7 +54,7 @@ while True:
 
     #creating world
     drawing.background(player.angle)
-    walls = ray_casting(player, drawing.textures)
+    walls = ray_casting_walls(player, drawing.textures)
     drawing.world(walls + [obj.object_locate(player) for obj in sprites.list_of_objects])
     drawing.mini_map(player)
 

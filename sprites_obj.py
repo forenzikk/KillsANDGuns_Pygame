@@ -15,6 +15,7 @@ class Sprites:
                     [pygame.image.load(f'sprites/bochka/{i}.png').convert_alpha() for i in range(12)]),
                 'animation_dist': 800,
                 'animation_speed': 10,
+                'blocked': True,
             },
             'pumpkin': {
                 'sprite': pygame.image.load('sprites/creepy_pumpkin/0.png').convert_alpha(),
@@ -46,7 +47,7 @@ class Sprites:
                     [pygame.image.load(f'sprites/fire/{i}.png').convert_alpha() for i in range(16)]),
                 'animation_dist': 800,
                 'animation_speed': 5,
-                'blocked': None,
+                'blocked': False,
             },
         }
 
@@ -68,8 +69,11 @@ class SpriteObject:
         self.animation = parameters['animation'].copy()
         self.animation_dist = parameters['animation_dist']
         self.animation_speed = parameters['animation_speed']
+        self.blocked = parameters['blocked']
+        self.side = 30
         self.animation_count = 0
-        self.pos = self.x, self.y = pos[0] * tile, pos[1] * tile
+        self.x, self.y = pos[0] * tile, pos[1] * tile
+        self.pos = self.x - self.side // 2, self.y - self.side // 2
         if self.viewing_angles:
             self.sprite_angles = [frozenset(range(i, i + 45)) for i in range(0, 360, 45)]
             self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
