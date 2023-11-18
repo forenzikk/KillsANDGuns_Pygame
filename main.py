@@ -1,40 +1,10 @@
-import pygame
-import time
-from parametres import *
-from player_config import Player
-import math
-from play_map import world_map
-from drawings import Drawing
-from rays_geometry import *
+import pygame, time
 from sprites_obj import *
+from drawings import Drawing
+from cooperation import *
 
-pygame.init()
-screen = pygame.display.set_mode((width, height))
-pygame.mouse.set_visible(False)
-screen_map = pygame.Surface(minimap_res)
 
-pygame.display.set_caption("Kills & Guns")#title of game
-icon = pygame.image.load('images/icon.png')#icon
-
-bg_sound = pygame.mixer.Sound('sounds/sound.mp3')#sound
-bg_sound.play()
-
-pygame.display.set_icon(icon)
-clock = pygame.time.Clock()
-
-#instances of classes
-sprites = Sprites()
-player = Player(sprites)
-drawing = Drawing(screen, screen_map)
-
-font = pygame.font.Font(None, 36)
-
-sprites = Sprites()
-clock = pygame.time.Clock()
-player = Player(sprites)
-drawing = Drawing(screen, screen_map)
-
-def write_text(text):   #вывод текста перед игрой
+def write_text(text):#вывод текста перед игрой
     screen.fill((0, 0, 0))
     text_surface = font.render(text, True, (255, 255, 255))
     text_rect = text_surface.get_rect()
@@ -44,19 +14,39 @@ def write_text(text):   #вывод текста перед игрой
     time.sleep(5)  # Задержка в 5 секунд
     return None
 
+
+pygame.init()
+screen = pygame.display.set_mode((width, height))#размер экрана
+pygame.mouse.set_visible(False)
+screen_map = pygame.Surface(minimap_res)
+
+pygame.display.set_caption("Kills & Guns")#title of game
+icon = pygame.image.load('images/icon.png')#icon
+
+#инициализация экземпляров
+sprites = Sprites()
+clock = pygame.time.Clock()#желаемое кол-во кадров в сек
+player = Player(sprites)
+drawing = Drawing(screen, screen_map, player, clock)
+interaction = Interaction(player, sprites, drawing)
+
+drawing.menu()
+pygame.mouse.set_visible(False)
+interaction.play_music()
+font = pygame.font.Font(None, 36)
+
 write_text("Добро пожаловать в настоящий ад, мой друг! Посмотрим, что ты можешь")
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            exit()
     player.movement()
-    screen.fill((0, 0, 0))
-
-    #creating world
     drawing.background(player.angle)
-    walls = ray_casting_walls(player, drawing.textures)
+    walls, wall_shot = ray_casting_walls(player, drawing.textures)
     drawing.world(walls + [obj.object_locate(player) for obj in sprites.list_of_objects])
     drawing.mini_map(player)
+    drawing.player_weapon([wall_shot, sprites.sprite_shot])
+
+    interaction.interaction_objects()
+    interaction.npc_action()
+    interaction.check_win()
 
     pygame.display.flip()
     clock.tick()
