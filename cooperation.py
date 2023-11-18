@@ -1,5 +1,3 @@
-from parametres import *
-from player_config import *
 from rays_geometry import *
 from play_map import *
 import math
@@ -77,9 +75,6 @@ class Interaction:
                             obj.is_dead = True
                             obj.blocked = None
                             self.drawing.shot_animation_trigger = False
-                    if obj.flag in {'door_h', 'door_v'} and obj.distance_to_sprite < tile:
-                        obj.door_open_trigger = True
-                        obj.blocked = None
                     break
 
     def npc_action(self):
@@ -107,13 +102,12 @@ class Interaction:
             else:
                 obj.y = obj.y - 1
 
-    def play_music(self):
-        pygame.mixer.pre_init(44100, -16, 2, 2048)
+    def musical_playing(self):
         pygame.mixer.init()
         pygame.mixer.music.load('sounds/background.mp3')
-        pygame.mixer.music.play(10)
+        pygame.mixer.music.play(-1)
 
-    def check_win(self):
+    def check_win(self):#Выявление, окончена ли игра
         if not len([obj for obj in self.sprites.list_of_objects if obj.flag == 'npc' and not obj.is_dead]):
             pygame.mixer.music.stop()
             pygame.mixer.music.load('sounds/winSound.mp3')

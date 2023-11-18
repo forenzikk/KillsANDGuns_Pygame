@@ -28,20 +28,22 @@ class Sprites:
                 'obj_action': []
             },
             'pumpkin': {
-                'sprite': pygame.image.load('sprites/creepy_pumpkin/0.png').convert_alpha(),
+                'sprite': pygame.image.load(f'sprites/creepy_pumpkin/0.png').convert_alpha(),
                 'viewing_angles': None,
                 'shift': 0.6,
                 'scale': (0.6, 0.6),
                 'side': 30,
-                'animation': deque([pygame.image.load(f'sprites/creepy_pumpkin/{i}.png').convert_alpha() for i in range(8)]),
-                'death_animation': [],
-                'is_dead': 'immortal',
-                'dead_shift': None,
-                'animation_dist': 800,
+                'animation': [],
+                'death_animation': deque([pygame.image.load(f'sprites/npc/soldier0/death/{i}.png')
+                                           .convert_alpha() for i in range(2, 6)]),
+                'is_dead': None,
+                'dead_shift': 0.6,
+                'animation_dist': None,
                 'animation_speed': 10,
                 'blocked': True,
-                'flag': 'decor',
-                'obj_action': []
+                'flag': 'npc',
+                'obj_action': deque(
+                    [pygame.image.load(f'sprites/creepy_pumpkin/{i}.png').convert_alpha() for i in range(7)]),
             },
             'death': {
                 'sprite': [pygame.image.load(f'sprites/death/{i}.png').convert_alpha() for i in range(8)],
@@ -51,7 +53,7 @@ class Sprites:
                 'side': 50,
                 'animation': [],
                 'death_animation': deque([pygame.image.load(f'sprites/npc/soldier0/death/{i}.png')
-                                           .convert_alpha() for i in range(6)]),
+                                           .convert_alpha() for i in range(2, 6)]),
                 'is_dead': None,
                 'dead_shift': 0.6,
                 'animation_dist': None,
@@ -117,11 +119,11 @@ class SpriteObject:
         self.shift = parameters['shift']
         self.scale = parameters['scale']
         self.animation = parameters['animation'].copy()
-        # ---------------------
+
         self.death_animation = parameters['death_animation'].copy()
         self.is_dead = parameters['is_dead']
         self.dead_shift = parameters['dead_shift']
-        # ---------------------
+
         self.animation_dist = parameters['animation_dist']
         self.animation_speed = parameters['animation_speed']
         self.blocked = parameters['blocked']
@@ -133,7 +135,7 @@ class SpriteObject:
         self.animation_count = 0
         self.npc_action_trigger = False
         self.door_open_trigger = False
-        self.door_prev_pos = self.y if self.flag == 'door_h' else self.x
+        #self.door_prev_pos = self.y if self.flag == 'door_h' else self.x
         self.delete = False
         if self.viewing_angles:
             if len(self.object) == 8:
@@ -189,9 +191,9 @@ class SpriteObject:
 
 
             # sprite scale and positions
-            sprite_pos = (self.current_ray * scale - half_sprite_width, (height // 2) - half_sprite_height + shift)
+            sprite_position = (self.current_ray * scale - half_sprite_width, (height // 2) - half_sprite_height + shift)
             sprite = pygame.transform.scale(sprite_object, (sprite_width, sprite_height))
-            return (self.distance_to_sprite, sprite, sprite_pos)
+            return (self.distance_to_sprite, sprite, sprite_position)
         else:
             return (False,)
 

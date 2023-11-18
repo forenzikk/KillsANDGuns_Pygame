@@ -77,7 +77,7 @@ def ray_casting_walls(player, textures):
     walls = []
     for ray, casted_values in enumerate(casted_walls):
         depth, offset, proj_height, texture = casted_values
-        wall_column = textures[texture].subsurface(offset * scale_texture, 0, scale_texture, heigth_of_textures)
+        wall_column = textures[texture].subsurface(offset * scale_texture, 0, scale_texture, height_of_textures)
         wall_column = pygame.transform.scale(wall_column, (scale, proj_height))
         wall_position = (ray * scale, (height // 2) - proj_height // 2)
 

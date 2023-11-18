@@ -1,5 +1,6 @@
 import pygame, time
 from sprites_obj import *
+from player_config import *
 from drawings import Drawing
 from cooperation import *
 
@@ -32,7 +33,7 @@ interaction = Interaction(player, sprites, drawing)
 
 drawing.menu()
 pygame.mouse.set_visible(False)
-interaction.play_music()
+interaction.musical_playing()
 font = pygame.font.Font(None, 36)
 
 write_text("Добро пожаловать в настоящий ад, мой друг! Посмотрим, что ты можешь")

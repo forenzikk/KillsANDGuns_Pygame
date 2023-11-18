@@ -1,6 +1,3 @@
-import pygame
-from parametres import *
-from rays_geometry import *
 from play_map import *
 from collections import deque
 from random import randrange
@@ -91,7 +88,7 @@ class Drawing:
             self.sfx_length_count += 1
             self.sfx.rotate(-1)
 
-    def win(self):
+    def win(self):#отрисовка окончания игры
         render = self.font_win.render('YOU WIN!!!', 1, (randrange(40, 120), 0, 0))
         rect = pygame.Rect(0, 0, 1000, 300)
         rect.center = (width // 2), (height // 2)
@@ -101,17 +98,26 @@ class Drawing:
         self.clock.tick(15)
 
     def menu(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load('sounds/menu_sound.mp3')
+        pygame.mixer.music.play(-1)
+
         x = 0
+
         button_font = pygame.font.Font('font/font.ttf', 72)
-        label_font = pygame.font.Font('font/font1.otf', 400)
-        start = button_font.render('START', 1, pygame.Color('lightgray'))
+        label_font = pygame.font.Font('font/font1.otf', 155)
+        start = button_font.render('START', 1, pygame.Color('white'))
         button_start = pygame.Rect(0, 0, 400, 150)
         button_start.center = (width // 2), (height // 2)
-        exit = button_font.render('EXIT', 1, pygame.Color('lightgray'))
+        exit = button_font.render('EXIT', 1, pygame.Color('white'))
         button_exit = pygame.Rect(0, 0, 400, 150)
         button_exit.center = (width // 2), (height // 2) + 200
+        author = button_font.render("Made by Ovannisyan", 1, pygame.Color('white'))
+        text_author = pygame.Rect(0, 0, 400, 150)
+        text_author.center = (width // 2), (height // 2) + 300
 
-        while self.menu_trigger:
+
+        while self.menu_trigger:#отрисовка экрана перед игрой
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -120,19 +126,21 @@ class Drawing:
             self.screen.blit(self.menu_picture, (0, 0), (x % width, height // 2, width, height))
             x += 1
 
-            pygame.draw.rect(self.screen, (0, 0, 0), button_start, border_radius=25, width=10)
+            pygame.draw.rect(self.screen, (0, 0, 0), button_start, border_radius=25, width=10)#START
             self.screen.blit(start, (button_start.centerx - 130, button_start.centery - 70))
 
-            pygame.draw.rect(self.screen, (0, 0, 0), button_exit, border_radius=25, width=10)
+            pygame.draw.rect(self.screen, (0, 0, 0), button_exit, border_radius=25, width=10)#EXIT
             self.screen.blit(exit, (button_exit.centerx - 85, button_exit.centery - 70))
 
-            color = randrange(40)
-            label = label_font.render('KILLS & GUNS', 1, (color, color, color))
-            self.screen.blit(label, (15, -30))
+            pygame.draw.rect(self.screen, (0, 0, 0), text_author, border_radius=25, width=10)#AUTHOR
+            self.screen.blit(author, (text_author.centery - 520, text_author.centery - 20))
+
+            label = label_font.render('KILLS and GUNS', 1, (40, 40, 40))#Название игры
+            self.screen.blit(label, (70, 30))
 
             mouse_position = pygame.mouse.get_pos()
             mouse_click = pygame.mouse.get_pressed()
-            if button_start.collidepoint(mouse_position):
+            if button_start.collidepoint(mouse_position):#реализация кликабельности
                 pygame.draw.rect(self.screen, (0, 0, 0), button_start, border_radius=25)
                 self.screen.blit(start, (button_start.centerx - 130, button_start.centery - 70))
                 if mouse_click[0]:

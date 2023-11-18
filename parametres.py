@@ -2,9 +2,7 @@ import math
 
 width = 1200
 height = 800
-fps = 60
 tile = 100
-fps_pos = (width - 65, 5)
 
 minimap_scale = 5
 minimap_res = (width // minimap_scale - 70, height // minimap_scale)
@@ -26,7 +24,7 @@ fake_rays = 100
 fake_rays_range = count_of_rays - 1 + 2 * fake_rays
 
 width_of_textures = 1200
-heigth_of_textures = 1200
+height_of_textures = 1200
 scale_texture = width_of_textures // tile
 
 player_position = ((width // 2) // 4, (height // 2) - 50)
