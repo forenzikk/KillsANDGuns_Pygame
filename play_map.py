@@ -31,10 +31,10 @@ height_of_world = len(matrix_map) * tile
 world_map = Dict.empty(key_type=types.UniTuple(int32, 2), value_type=int32)
 mini_map = set()
 collision_walls = []
-for j, row in enumerate(matrix_map):
+for j, row in enumerate(matrix_map):#координаты строк - x, координаты списка - у
     for i, char in enumerate(row):
         if char:
-            mini_map.add((i * map_tile, j * map_tile))
+            mini_map.add((i * map_tile, j * map_tile))#заносим в множество только стены
             collision_walls.append(pygame.Rect(i * tile, j * tile, tile, tile))
             if char == 1:
                 world_map[(i * tile, j * tile)] = 1

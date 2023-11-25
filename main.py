@@ -16,7 +16,7 @@ def write_text(text):#вывод текста перед игрой
     return None
 
 
-pygame.init()
+pygame.init()#инициализация всех необходимых модулей
 screen = pygame.display.set_mode((width, height))#размер экрана
 pygame.mouse.set_visible(False)
 screen_map = pygame.Surface(minimap_res)
@@ -32,7 +32,6 @@ drawing = Drawing(screen, screen_map, player, clock)
 interaction = Interaction(player, sprites, drawing)
 
 drawing.menu()
-pygame.mouse.set_visible(False)
 interaction.musical_playing()
 font = pygame.font.Font(None, 36)
 
@@ -49,5 +48,5 @@ while True:
     interaction.npc_action()
     interaction.check_win()
 
-    pygame.display.flip()
+    pygame.display.flip()#обновление содержимого на каждой итерации
     clock.tick()

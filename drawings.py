@@ -36,7 +36,7 @@ class Drawing:
         self.sfx_length = len(self.sfx)
 
     def background(self, angle):
-        sky_offset = -10 * math.degrees(angle) % width
+        sky_offset = -10 * math.degrees(angle) % width#смещение по текстуре
         self.screen.blit(self.textures['S'], (sky_offset, 0))
         self.screen.blit(self.textures['S'], (sky_offset - width, 0))
         self.screen.blit(self.textures['S'], (sky_offset + width, 0))
@@ -97,7 +97,7 @@ class Drawing:
         pygame.display.flip()
         self.clock.tick(15)
 
-    def menu(self):
+    def menu(self):#архитектура менюшки
         pygame.mixer.init()
         pygame.mixer.music.load('sounds/menu_sound.mp3')
         pygame.mixer.music.play(-1)

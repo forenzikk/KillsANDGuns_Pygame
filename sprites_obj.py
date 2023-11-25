@@ -1,5 +1,3 @@
-import pygame
-from parametres import *
 from collections import deque
 from rays_geometry import *
 from numba.core import types
