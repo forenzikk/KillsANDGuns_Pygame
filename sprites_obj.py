@@ -33,7 +33,7 @@ class Sprites:
                 'side': 30,
                 'animation': [],
                 'death_animation': deque([pygame.image.load(f'sprites/npc/soldier0/death/{i}.png')
-                                           .convert_alpha() for i in range(2, 6)]),
+                                           .convert_alpha() for i in range(2, 10)]),
                 'is_dead': None,
                 'dead_shift': 0.6,
                 'animation_dist': None,
@@ -51,7 +51,7 @@ class Sprites:
                 'side': 50,
                 'animation': [],
                 'death_animation': deque([pygame.image.load(f'sprites/npc/soldier0/death/{i}.png')
-                                           .convert_alpha() for i in range(2, 6)]),
+                                           .convert_alpha() for i in range(2, 10)]),
                 'is_dead': None,
                 'dead_shift': 0.6,
                 'animation_dist': None,
