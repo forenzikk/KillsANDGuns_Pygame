@@ -5,8 +5,8 @@ height = 800
 tile = 100#размер квадрата карты
 
 minimap_scale = 5#масштабирующий коэффициент
-minimap_res = (width // minimap_scale - 70, height // minimap_scale)
-map_scale = 2 * minimap_scale
+minimap_res = (width // minimap_scale - 70, height // minimap_scale)#размер мини-карты
+map_scale = 2 * minimap_scale#числовой коэффициент
 map_tile = tile // map_scale# масштаб для стороны квадрата
 map_position = (0, height - height // minimap_scale - 640)
 

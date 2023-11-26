@@ -43,10 +43,10 @@ class Drawing:
         pygame.draw.rect(self.screen, (20, 20, 20), (0, (height // 2), width, height // 2))
 
     def world(self, world_objects):
-        for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):
+        for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):#отсортировали по глубине
             if obj[0]:
-                _, object, object_pos = obj
-                self.screen.blit(object, object_pos)
+                _, object, object_pos = obj#отсекаем лишние значения для спрайтов
+                self.screen.blit(object, object_pos)#наносим объекты на главную поверхность
 
     def mini_map(self, player):
         self.screen_map.fill((0, 0, 0))

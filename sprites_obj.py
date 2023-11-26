@@ -8,10 +8,10 @@ class Sprites:
     def __init__(self):
         self.sprite_parameters = {
             'bochka': {
-                'sprite': pygame.image.load('sprites/bochka/0.png').convert_alpha(),
+                'sprite': pygame.image.load('sprites/bochka/0.png').convert_alpha(),#использую альфа-канал
                 'viewing_angles': None,
-                'shift': 1.8,
-                'scale': (0.4, 0.4),
+                'shift': 1.8,#сдвиг
+                'scale': (0.4, 0.4),#и масштаб
                 'side': 30,
                 'animation': deque(
                     [pygame.image.load(f'sprites/bochka/{i}.png').convert_alpha() for i in range(12)]),
@@ -19,7 +19,7 @@ class Sprites:
                                           .convert_alpha() for i in range(4)]),
                 'is_dead': None,
                 'dead_shift': 2.6,
-                'animation_dist': 800,
+                'animation_dist': 800,#расстояние до спрайта, чтобы включалась его анимация
                 'animation_speed': 10,
                 'blocked': True,
                 'flag': 'decor',
@@ -114,8 +114,8 @@ class SpriteObject:
     def __init__(self, parameters, pos):
         self.object = parameters['sprite'].copy()
         self.viewing_angles = parameters['viewing_angles']
-        self.shift = parameters['shift']
-        self.scale = parameters['scale']
+        self.shift = parameters['shift']#сдвиг по высоте
+        self.scale = parameters['scale']#масштабирование картинки
         self.animation = parameters['animation'].copy()
 
         self.death_animation = parameters['death_animation'].copy()
@@ -156,26 +156,26 @@ class SpriteObject:
 
     def object_locate(self, player):
 
-        dx, dy = self.x - player.x, self.y - player.y
-        self.distance_to_sprite = math.sqrt(dx ** 2 + dy ** 2)
+        dx, dy = self.x - player.x, self.y - player.y#разница координат игрока и спрайтов
+        self.distance_to_sprite = math.sqrt(dx ** 2 + dy ** 2)#вычисление расстояния между ними
 
-        self.theta = math.atan2(dy, dx)
-        gamma = self.theta - player.angle
-        if dx > 0 and 180 <= math.degrees(player.angle) <= 360 or dx < 0 and dy < 0:
-            gamma += double_pi
+        self.theta = math.atan2(dy, dx)#рассчет углов
+        gamma = self.theta - player.angle#еще углы
+        if dx > 0 and 180 <= math.degrees(player.angle) <= 360 or dx < 0 and dy < 0:#эмпирическое условие для угла
+            gamma += double_pi#но приходится корректировать угол
         self.theta -= 1.4 * gamma
 
-        delta_rays = int(gamma / delta_angle)
+        delta_rays = int(gamma / delta_angle)#смещение спрайта относительно центрального луча
         self.current_ray = center_of_ray + delta_rays
 
         fake_ray = self.current_ray + fake_rays
         if 0 <= fake_ray <= fake_rays_range and self.distance_to_sprite > 30:
-            self.proj_height = min(int(proj_coeff / self.distance_to_sprite), height)
+            self.proj_height = min(int(proj_coeff / self.distance_to_sprite), height)#проекционная высота спрйта (ограниченная)
             sprite_width = int(self.proj_height * self.scale[0])
             sprite_height = int(self.proj_height * self.scale[1])
-            half_sprite_width = sprite_width // 2
+            half_sprite_width = sprite_width // 2#коэффициенты масштабирования
             half_sprite_height = sprite_height // 2
-            shift = half_sprite_height * self.shift
+            shift = half_sprite_height * self.shift#регулирование высоты спрайта
 
             if self.is_dead and self.is_dead != 'immortal':
                 sprite_object = self.dead_animation()
@@ -189,19 +189,19 @@ class SpriteObject:
 
 
             # sprite scale and positions
-            sprite_position = (self.current_ray * scale - half_sprite_width, (height // 2) - half_sprite_height + shift)
-            sprite = pygame.transform.scale(sprite_object, (sprite_width, sprite_height))
+            sprite_position = (self.current_ray * scale - half_sprite_width, (height // 2) - half_sprite_height + shift)#позиция относительно луча
+            sprite = pygame.transform.scale(sprite_object, (sprite_width, sprite_height))#масштабирование по размеру проекции
             return (self.distance_to_sprite, sprite, sprite_position)
         else:
             return (False,)
 
     def sprite_animation(self):
-        if self.animation and self.distance_to_sprite < self.animation_dist:
+        if self.animation and self.distance_to_sprite < self.animation_dist:#условия запуска анимации
             sprite_object = self.animation[0]
             if self.animation_count < self.animation_speed:
                 self.animation_count += 1
             else:
-                self.animation.rotate()
+                self.animation.rotate()#прокручиваем очередь для анимации
                 self.animation_count = 0
             return sprite_object
         return self.object

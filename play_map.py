@@ -5,7 +5,7 @@ from numba.typed import Dict
 from numba import int32
 
 o = False
-matrix_map = [
+matrix = [
 
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, o, o, o, o, o, 2, o, o, o, o, o, o, o, o, o, 1],
@@ -26,12 +26,12 @@ matrix_map = [
 
 ]
 
-width_of_world = len(matrix_map[0]) * tile
-height_of_world = len(matrix_map) * tile
+width_of_world = len(matrix[0]) * tile#переменные для правильного вычисления луча в rays_geometry
+height_of_world = len(matrix) * tile
 world_map = Dict.empty(key_type=types.UniTuple(int32, 2), value_type=int32)
 mini_map = set()
 collision_walls = []
-for j, row in enumerate(matrix_map):#координаты строк - x, координаты списка - у
+for j, row in enumerate(matrix):#координаты строк - x, координаты списка - у
     for i, char in enumerate(row):
         if char:
             mini_map.add((i * map_tile, j * map_tile))#заносим в множество только стены

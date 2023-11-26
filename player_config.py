@@ -5,7 +5,7 @@ class Player:
         self.x, self.y = player_position
         self.sprites = sprites
         self.angle = player_angle
-        self.sensitivity = 0.004
+        self.sensitivity = 0.004#чувствительность
         # collision parameters
         self.side = 50
         self.rect = pygame.Rect(*player_position, self.side, self.side)
@@ -52,7 +52,7 @@ class Player:
         self.keys_control()
         self.mouse_control()
         self.rect.center = self.x, self.y
-        self.angle %= double_pi
+        self.angle %= double_pi#угол направления игрока
 
     def keys_control(self):
         sin_a = math.sin(self.angle)
@@ -92,6 +92,6 @@ class Player:
 
     def mouse_control(self):
         if pygame.mouse.get_focused():
-            difference = pygame.mouse.get_pos()[0] - (width // 2)
-            pygame.mouse.set_pos(((width // 2), (height // 2)))
-            self.angle += difference * self.sensitivity
+            difference = pygame.mouse.get_pos()[0] - (width // 2)#разница координат курсора и середины окна
+            pygame.mouse.set_pos(((width // 2), (height // 2)))#переносим указатель в центр
+            self.angle += difference * self.sensitivity#прибавляем к нему ту самую разницу + учет чувствительности
