@@ -2,7 +2,7 @@ from play_map import *
 from collections import deque
 from sprites_obj import *
 from parametres import *
-from random import randrange
+from random import randrange, randint
 from rays_geometry import *
 import sys, time
 
@@ -39,7 +39,8 @@ class Drawing:
         self.sfx_length_count = 0
         self.sfx_length = len(self.sfx)
         self.screen = pygame.display.set_mode((width, height))
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font(None, 96)
+        self.score = 10000
 
     def background(self, angle):
         sky_offset = -10 * math.degrees(angle) % width#смещение по текстуре
@@ -85,6 +86,15 @@ class Drawing:
                 self.shot_animation_trigger = True
         else:
             self.screen.blit(self.weapon_base_sprite, self.weapon_position)
+
+    def draw_score(self, clock):
+        substracter = randint(0, 1)
+        self.score = self.score - substracter
+        max_score_str = str(self.score)
+        render = self.font.render(max_score_str, 0, (255, 255, 255))
+        render2 = self.font.render("Your score: ", 0, (255, 255, 255))
+        self.screen.blit(render2, (width - 580, 5))
+        self.screen.blit(render, (width - 170, 5))
 
 
     def bullet_sfx(self):#взрыв по объекту центрального луча и вблизи него

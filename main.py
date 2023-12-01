@@ -40,11 +40,12 @@ while True:
     drawing.background(player.angle)
     walls, wall_shot = ray_casting_walls(player, drawing.textures)
     drawing.world(walls + [obj.object_locate(player) for obj in
-                           sprites.list_of_objects])  # передаем список параметров стен и список вычисленных параметров спрайтов
+                           sprites.list_of_objects])# передаем список параметров стен и список вычисленных параметров спрайтов
     drawing.mini_map(player)
     drawing.player_weapon([wall_shot, sprites.sprite_shot])
+    drawing.draw_score(clock)
     interaction.interaction_objects()
     interaction.npc_action()
     interaction.check_win()
     pygame.display.flip()  # обновление содержимого на каждой итерации
-    pygame.time.Clock().tick()
+    clock.tick()
