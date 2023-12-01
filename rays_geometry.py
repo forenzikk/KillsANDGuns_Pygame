@@ -1,7 +1,7 @@
 from play_map import *
 from numba import njit
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=True)#декоратор
 def mapping(a, b):#вычисление координат верхнего леового угла - квадрат, где мы генерируемся
     return int(a // tile) * tile, int(b // tile) * tile
 
@@ -67,7 +67,7 @@ def ray_casting(player_position, angle_of_player, world_map):
         depth = max(depth, 0.00001)#недоступность падения игры из-за деления на 0
         proj_height = int(proj_coeff / depth)
 
-        casted_walls.append((depth, offset, proj_height, texture))
+        casted_walls.append((depth, offset, proj_height, texture))#для каждого луча: дальность до стены;сдвиг по текстуре;проекционная высота стены;№текстуры
         current_angle += delta_angle
     return casted_walls
 

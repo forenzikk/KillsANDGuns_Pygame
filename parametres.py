@@ -1,4 +1,4 @@
-import math
+import math, pygame
 
 width = 1200
 height = 800
@@ -18,7 +18,6 @@ distantion = count_of_rays / (2 * math.tan((field_of_view / 2)))#расстоя�
 proj_coeff = 3 * distantion * tile#проекция высоты (основание треугольника по подобию)
 scale = width // count_of_rays#масштабирующий коэффициаент (чтобы без тормозов работало)
 
-double_pi = math.pi * 2
 center_of_ray = count_of_rays // 2 - 1
 fake_rays = 100
 fake_rays_range = count_of_rays - 1 + 2 * fake_rays
@@ -29,4 +28,4 @@ scale_texture = width_of_textures // tile
 
 player_position = ((width // 2) // 4, (height // 2) - 50)
 player_angle = 0#направление взгляда игрока
-player_speed = 3
+player_speed = 2

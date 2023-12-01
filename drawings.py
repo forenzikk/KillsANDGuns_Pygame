@@ -1,13 +1,17 @@
 from play_map import *
 from collections import deque
+from sprites_obj import *
+from parametres import *
 from random import randrange
-import sys
+from rays_geometry import *
+import sys, time
 
 class Drawing:
     def __init__(self, screen, screen_map, player, clock):
         self.screen = screen
         self.screen_map = screen_map
         self.player = player
+        self.flag = 0
         self.clock = clock
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
         self.font_win = pygame.font.Font('font/font.ttf', 144)
@@ -21,7 +25,7 @@ class Drawing:
         # weapon parameters
         self.weapon_base_sprite = pygame.image.load('sprites/guns/shotgun/base/0.png').convert_alpha()
         self.weapon_shot_animation = deque([pygame.image.load(f'sprites/guns/shotgun/shot/{i}.png').convert_alpha()
-                                            for i in range(20)])
+                                            for i in range(20)])#класс очереди
         self.weapon_rect = self.weapon_base_sprite.get_rect()#для удобного определения позиции спрайта с оружием
         self.weapon_position = ((width // 2) - self.weapon_rect.width // 2, height - self.weapon_rect.height)
         self.shot_length = len(self.weapon_shot_animation)
@@ -34,6 +38,8 @@ class Drawing:
         self.sfx = deque([pygame.image.load(f'sprites/guns/sfx/{i}.png').convert_alpha() for i in range(9)])
         self.sfx_length_count = 0
         self.sfx_length = len(self.sfx)
+        self.screen = pygame.display.set_mode((width, height))
+        self.font = pygame.font.Font(None, 36)
 
     def background(self, angle):
         sky_offset = -10 * math.degrees(angle) % width#смещение по текстуре
@@ -62,7 +68,7 @@ class Drawing:
         if self.player.shot:
             if not self.shot_length_count:
                 self.shot_sound.play()
-            self.shot_projection = min(shots)[1] // 2
+            self.shot_projection = min(shots)[1] // 2#определение кратчайшего расстония до объекта под огнем
             self.bullet_sfx()
             shot_sprite = self.weapon_shot_animation[0]
             self.screen.blit(shot_sprite, self.weapon_position)
@@ -80,7 +86,8 @@ class Drawing:
         else:
             self.screen.blit(self.weapon_base_sprite, self.weapon_position)
 
-    def bullet_sfx(self):
+
+    def bullet_sfx(self):#взрыв по объекту центрального луча и вблизи него
         if self.sfx_length_count < self.sfx_length:
             sfx = pygame.transform.scale(self.sfx[0], (self.shot_projection, self.shot_projection))
             sfx_rect = sfx.get_rect()
@@ -88,7 +95,7 @@ class Drawing:
             self.sfx_length_count += 1
             self.sfx.rotate(-1)
 
-    def win(self):#отрисовка окончания игры
+    def win(self):  # отрисовка окончания игры
         render = self.font_win.render('YOU WIN!!!', 1, (randrange(40, 120), 0, 0))
         rect = pygame.Rect(0, 0, 1000, 300)
         rect.center = (width // 2), (height // 2)
@@ -106,9 +113,12 @@ class Drawing:
 
         button_font = pygame.font.Font('font/font.ttf', 72)
         label_font = pygame.font.Font('font/font1.otf', 155)
-        start = button_font.render('START', 1, pygame.Color('white'))
-        button_start = pygame.Rect(0, 0, 400, 150)
-        button_start.center = (width // 2), (height // 2)
+        level1 = button_font.render('LEVEL 1', 1, pygame.Color('white'))
+        button_level1 = pygame.Rect(0, 0, 400, 150)
+        button_level1.center = (width // 2), (height // 2 - 85)
+        level2 = button_font.render('LEVEL 2', 1, pygame.Color('white'))
+        button_level2 = pygame.Rect(0, 0, 400, 150)
+        button_level2.center = (width // 2), (height // 2 + 50)
         exit = button_font.render('EXIT', 1, pygame.Color('white'))
         button_exit = pygame.Rect(0, 0, 400, 150)
         button_exit.center = (width // 2), (height // 2) + 200
@@ -126,8 +136,11 @@ class Drawing:
             self.screen.blit(self.menu_picture, (0, 0), (x % width, height // 2, width, height))
             x += 1
 
-            pygame.draw.rect(self.screen, (0, 0, 0), button_start, border_radius=25, width=10)#START
-            self.screen.blit(start, (button_start.centerx - 130, button_start.centery - 70))
+            pygame.draw.rect(self.screen, (0, 0, 0), button_level1, border_radius=25, width=10)#LEVEL1
+            self.screen.blit(level1, (button_level1.centerx - 150, button_level1.centery - 70))
+
+            pygame.draw.rect(self.screen, (0, 0, 0), button_level2, border_radius=25, width=10)#LEVEL2
+            self.screen.blit(level2, (button_level2.centerx - 150, button_level2.centery - 50))
 
             pygame.draw.rect(self.screen, (0, 0, 0), button_exit, border_radius=25, width=10)#EXIT
             self.screen.blit(exit, (button_exit.centerx - 85, button_exit.centery - 70))
@@ -140,17 +153,46 @@ class Drawing:
 
             mouse_position = pygame.mouse.get_pos()
             mouse_click = pygame.mouse.get_pressed()
-            if button_start.collidepoint(mouse_position):#реализация кликабельности
-                pygame.draw.rect(self.screen, (0, 0, 0), button_start, border_radius=25)
-                self.screen.blit(start, (button_start.centerx - 130, button_start.centery - 70))
+            if button_level1.collidepoint(mouse_position):#реализация кликабельности
+                pygame.draw.rect(self.screen, (0, 0, 0), button_level1, border_radius=25)
+                self.screen.blit(level1, (button_level1.centerx - 130, button_level1.centery - 70))
                 if mouse_click[0]:
+                    self.flag = 1
                     self.menu_trigger = False
+
+            if button_level2.collidepoint(mouse_position):
+                pygame.draw.rect(self.screen, (0, 0, 0), button_level2, border_radius=25)
+                self.screen.blit(level2, (button_level2.centerx - 150, button_level2.centery - 70))
+                if mouse_click[0]:
+                    self.flag = 2
+                    self.menu_trigger = False
+
             elif button_exit.collidepoint(mouse_position):
                 pygame.draw.rect(self.screen, (0, 0, 0), button_exit, border_radius=25)
                 self.screen.blit(exit, (button_exit.centerx - 85, button_exit.centery - 70))
                 if mouse_click[0]:
                     pygame.quit()
                     sys.exit()
+
+            if self.flag == 1:
+                self.screen.fill((0, 0, 0))
+                text_surface = self.font.render("1 уровень", True, (255, 255, 255))
+                text_rect = text_surface.get_rect()
+                text_rect.center = (width // 2, height // 2)
+                self.screen.blit(text_surface, text_rect)
+                pygame.display.flip()
+                time.sleep(2)
+                return None
+
+            elif self.flag == 2:
+                self.screen.fill((0, 0, 0))
+                text_surface = self.font.render("2 уровень", True, (255, 255, 255))
+                text_rect = text_surface.get_rect()
+                text_rect.center = (width // 2, height // 2)
+                self.screen.blit(text_surface, text_rect)
+                pygame.display.flip()
+                time.sleep(2)
+                return None
 
             pygame.display.flip()
             self.clock.tick(20)

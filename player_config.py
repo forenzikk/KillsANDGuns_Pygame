@@ -7,7 +7,7 @@ class Player:
         self.angle = player_angle
         self.sensitivity = 0.004#чувствительность
         # collision parameters
-        self.side = 50
+        self.side = 50#размер стороны квадрата, который будет игроком вместо точки
         self.rect = pygame.Rect(*player_position, self.side, self.side)
         # gun
         self.shot = False
@@ -16,17 +16,17 @@ class Player:
     def get_position(self):
         return (self.x, self.y)
 
-    @property #перенос списка всех коллизий в отдельное св-во
+    @property #перенос списка всех коллизий в отдельное св-во (стены + спрайты)
     def collision_list(self):
         return collision_walls + [pygame.Rect(*obj.get_position, obj.side, obj.side) for obj in
                                   self.sprites.list_of_objects if obj.blocked]
 
     def detect_collision(self, dx, dy):
-        next_rect = self.rect.copy()
-        next_rect.move_ip(dx, dy)
-        hit_indexes = next_rect.collidelistall(self.collision_list)
+        next_rect = self.rect.copy()#копия текущего положения
+        next_rect.move_ip(dx, dy)#переместим на dx, dy
+        hit_indexes = next_rect.collidelistall(self.collision_list)#индекс стен с которыми столкнулся игрок (относительно)
 
-        if len(hit_indexes):
+        if len(hit_indexes):#в зависимости от столкновения ищем сторону, с которой столкнулись
             delta_x, delta_y = 0, 0
             for hit_index in hit_indexes:
                 hit_rect = self.collision_list[hit_index]
@@ -39,7 +39,7 @@ class Player:
                 else:
                     delta_y += hit_rect.bottom - next_rect.top
 
-            if abs(delta_x - delta_y) < 10:
+            if abs(delta_x - delta_y) < 10:#уперлись в угол
                 dx, dy = 0, 0
             elif delta_x > delta_y:
                 dy = 0
@@ -51,8 +51,8 @@ class Player:
     def movement(self):
         self.keys_control()
         self.mouse_control()
-        self.rect.center = self.x, self.y
-        self.angle %= double_pi#угол направления игрока
+        self.rect.center = self.x, self.y#перемещение квадрата, за который выступает игрок
+        self.angle %= (math.pi * 2)#угол направления игрока
 
     def keys_control(self):
         sin_a = math.sin(self.angle)
@@ -64,7 +64,7 @@ class Player:
         if keys[pygame.K_w]:
             dx = player_speed * cos_a
             dy = player_speed * sin_a
-            self.detect_collision(dx, dy)
+            self.detect_collision(dx, dy)#разрешение движения
         if keys[pygame.K_s]:
             dx = -player_speed * cos_a
             dy = -player_speed * sin_a
