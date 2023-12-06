@@ -1,9 +1,13 @@
+import math
+
 from play_map import *
 from numba import njit
 
-@njit(fastmath=True, cache=True)#декоратор
-def mapping(a, b):#вычисление координат верхнего леового угла - квадрат, где мы генерируемся
+
+@njit(fastmath=True, cache=True)  # декоратор
+def mapping(a, b):  # вычисление координат верхнего леового угла - квадрат, где мы генерируемся
     return int(a // tile) * tile, int(b // tile) * tile
+
 
 @njit(fastmath=True, cache=True)
 def ray_casting(player_position, angle_of_player, world_map):
@@ -11,7 +15,7 @@ def ray_casting(player_position, angle_of_player, world_map):
     xo, yo = player_position
     texture_vertical, texture_horisontal = 1, 1
     xn, yn = mapping(xo, yo)
-    current_angle = angle_of_player - (field_of_view / 2)
+    current_angle = angle_of_player - ((math.pi / 3) / 2)
     for ray in range(count_of_rays):
         sin_a = math.sin(current_angle)
         if sin_a:
@@ -28,12 +32,14 @@ def ray_casting(player_position, angle_of_player, world_map):
 
         # Пересечение с вертикалями
         if cos_a >= 0:
-            x, dx = xn + tile, 1#x - текущая вертикаль; dx - вспомогат. переменная для получения очередной вертикали
+            # x - текущая вертикаль; dx - вспомогат. переменная для получения
+            # очередной вертикали
+            x, dx = xn + tile, 1
         else:
             x, dx = xn, -1
 
-        for i in range(0, width_of_world, tile):#пройдемся по ширине карты
-            depth_vertical = (x - xo) / cos_a# расстояние до вертикали
+        for i in range(0, width_of_world, tile):  # пройдемся по ширине карты
+            depth_vertical = (x - xo) / cos_a  # расстояние до вертикали
             yv = yo + depth_vertical * sin_a
             tile_vertical = mapping(x + dx, yv)
             if tile_vertical in world_map:
@@ -62,24 +68,34 @@ def ray_casting(player_position, angle_of_player, world_map):
         else:
             depth, offset, texture = depth_horisontal, xh, texture_horisontal
 
-        offset = int(offset) % tile#смещение
+        offset = int(offset) % tile  # смещение
         depth *= math.cos(angle_of_player - current_angle)
-        depth = max(depth, 0.00001)#недоступность падения игры из-за деления на 0
+        # недоступность падения игры из-за деления на 0
+        depth = max(depth, 0.00001)
         proj_height = int(proj_coeff / depth)
 
-        casted_walls.append((depth, offset, proj_height, texture))#для каждого луча: дальность до стены;сдвиг по текстуре;проекционная высота стены;№текстуры
+        # для каждого луча: дальность до стены;сдвиг по текстуре;проекционная
+        # высота стены;№текстуры
+        casted_walls.append((depth, offset, proj_height, texture))
         current_angle += delta_angle
     return casted_walls
 
+
 def ray_casting_walls(player, textures):
     casted_walls = ray_casting(player.get_position, player.angle, world_map)
-    wall_shot = casted_walls[center_of_ray][0], casted_walls[center_of_ray][2]#размер проекции на центральном луче
+    # размер проекции на центральном луче
+    wall_shot = casted_walls[center_of_ray][0], casted_walls[center_of_ray][2]
     walls = []
     for ray, casted_values in enumerate(casted_walls):
         depth, offset, proj_height, texture = casted_values
-        wall_column = textures[texture].subsurface(offset * scale_texture, 0, scale_texture, height_of_textures)#выделение подповерхности
-        wall_column = pygame.transform.scale(wall_column, (scale, proj_height))#масштабирование
-        wall_position = (ray * scale, (height // 2) - proj_height // 2)
+        wall_column = textures[texture].subsurface(
+            offset * scale_texture,
+            0,
+            scale_texture,
+            height_of_textures)  # выделение подповерхности
+        wall_column = pygame.transform.scale(
+            wall_column, (scale, proj_height))  # масштабирование
+        wall_position = (ray * scale, 400 - proj_height // 2)
 
         walls.append((depth, wall_column, wall_position))
     return walls, wall_shot

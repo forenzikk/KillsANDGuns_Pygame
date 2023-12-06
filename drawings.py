@@ -1,5 +1,3 @@
-from play_map import *
-from collections import deque
 from sprites_obj import *
 from parametres import *
 from random import randrange, randint
@@ -19,41 +17,41 @@ class Drawing:
                          2: pygame.image.load('images/wall2.png').convert(),
                          'S': pygame.image.load('images/luna.jpg').convert()
                          }
-        # menu
+        # меню
         self.menu_trigger = True
         self.menu_picture = pygame.image.load('images/background.jpg').convert()
-        # weapon parameters
+        # параметры вооружения
         self.weapon_base_sprite = pygame.image.load('sprites/guns/shotgun/base/0.png').convert_alpha()
         self.weapon_shot_animation = deque([pygame.image.load(f'sprites/guns/shotgun/shot/{i}.png').convert_alpha()
                                             for i in range(20)])#класс очереди
         self.weapon_rect = self.weapon_base_sprite.get_rect()#для удобного определения позиции спрайта с оружием
-        self.weapon_position = ((width // 2) - self.weapon_rect.width // 2, height - self.weapon_rect.height)
+        self.weapon_position = (600 - self.weapon_rect.width // 2, 800 - self.weapon_rect.height)
         self.shot_length = len(self.weapon_shot_animation)
         self.shot_length_count = 0
         self.shot_animation_speed = 3
         self.shot_animation_count = 0
         self.shot_animation_trigger = True
         self.shot_sound = pygame.mixer.Sound('sounds/gun.mp3')
-        # sfx parameters
+        # sfx параметры
         self.sfx = deque([pygame.image.load(f'sprites/guns/sfx/{i}.png').convert_alpha() for i in range(9)])
         self.sfx_length_count = 0
         self.sfx_length = len(self.sfx)
-        self.screen = pygame.display.set_mode((width, height))
+        self.screen = pygame.display.set_mode((1200, 800))
         self.font = pygame.font.Font(None, 96)
         self.score = 10000
 
     def background(self, angle):
-        sky_offset = -10 * math.degrees(angle) % width#смещение по текстуре
+        sky_offset = -10 * math.degrees(angle) % 1200#смещение по текстуре
         self.screen.blit(self.textures['S'], (sky_offset, 0))
-        self.screen.blit(self.textures['S'], (sky_offset - width, 0))
-        self.screen.blit(self.textures['S'], (sky_offset + width, 0))
-        pygame.draw.rect(self.screen, (20, 20, 20), (0, (height // 2), width, height // 2))
+        self.screen.blit(self.textures['S'], (sky_offset - 1200, 0))
+        self.screen.blit(self.textures['S'], (sky_offset + 1200, 0))
+        pygame.draw.rect(self.screen, (20, 20, 20), (0, 400, 1200, 400))
 
     def world(self, world_objects):
         for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):#отсортировали по глубине
             if obj[0]:
-                _, object, object_pos = obj#отсекаем лишние значения для спрайтов
-                self.screen.blit(object, object_pos)#наносим объекты на главную поверхность
+                trash, object, object_position = obj#отсекаем лишние значения для спрайтов
+                self.screen.blit(object, object_position)#наносим объекты на главную поверхность
 
     def mini_map(self, player):
         self.screen_map.fill((0, 0, 0))
@@ -87,32 +85,31 @@ class Drawing:
         else:
             self.screen.blit(self.weapon_base_sprite, self.weapon_position)
 
-    def draw_score(self, clock):
+    def draw_score(self):
         substracter = randint(0, 1)
         self.score = self.score - substracter
+        record = self.score
         max_score_str = str(self.score)
         render = self.font.render(max_score_str, 0, (255, 255, 255))
         render2 = self.font.render("Your score: ", 0, (255, 255, 255))
-        self.screen.blit(render2, (width - 580, 5))
-        self.screen.blit(render, (width - 170, 5))
+        self.screen.blit(render2, (1200 - 580, 5))
+        self.screen.blit(render, (1200 - 170, 5))
+        return record
 
 
     def bullet_sfx(self):#взрыв по объекту центрального луча и вблизи него
         if self.sfx_length_count < self.sfx_length:
             sfx = pygame.transform.scale(self.sfx[0], (self.shot_projection, self.shot_projection))
             sfx_rect = sfx.get_rect()
-            self.screen.blit(sfx, ((width // 2) - sfx_rect.w // 2, (height // 2) - sfx_rect.h // 2))
+            self.screen.blit(sfx, (600 - sfx_rect.w // 2, 400 - sfx_rect.h // 2))
             self.sfx_length_count += 1
             self.sfx.rotate(-1)
 
-    def win(self):  # отрисовка окончания игры
-        render = self.font_win.render('YOU WIN!!!', 1, (randrange(40, 120), 0, 0))
-        rect = pygame.Rect(0, 0, 1000, 300)
-        rect.center = (width // 2), (height // 2)
-        pygame.draw.rect(self.screen, (0, 0, 0), rect, border_radius=50)
-        self.screen.blit(render, (rect.centerx - 430, rect.centery - 140))
+    def show_win(self):  # отрисовка окончания игры
+        render = self.font_win.render('YOU WIN!!!', 1, (randrange(0, 255), 0, 0))
+        self.screen.blit(render, (600 - 400, 400))
         pygame.display.flip()
-        self.clock.tick(15)
+        self.clock.tick(10)
 
     def menu(self):#архитектура менюшки
         pygame.mixer.init()
@@ -125,16 +122,16 @@ class Drawing:
         label_font = pygame.font.Font('font/font1.otf', 155)
         level1 = button_font.render('LEVEL 1', 1, pygame.Color('white'))
         button_level1 = pygame.Rect(0, 0, 400, 150)
-        button_level1.center = (width // 2), (height // 2 - 85)
+        button_level1.center = 600, (400 - 85)
         level2 = button_font.render('LEVEL 2', 1, pygame.Color('white'))
         button_level2 = pygame.Rect(0, 0, 400, 150)
-        button_level2.center = (width // 2), (height // 2 + 50)
+        button_level2.center = 600, 450
         exit = button_font.render('EXIT', 1, pygame.Color('white'))
         button_exit = pygame.Rect(0, 0, 400, 150)
-        button_exit.center = (width // 2), (height // 2) + 200
+        button_exit.center = 600, 600
         author = button_font.render("Made by Ovannisyan", 1, pygame.Color('white'))
         text_author = pygame.Rect(0, 0, 400, 150)
-        text_author.center = (width // 2), (height // 2) + 300
+        text_author.center = 600, 700
 
 
         while self.menu_trigger:#отрисовка экрана перед игрой
@@ -143,7 +140,7 @@ class Drawing:
                     pygame.quit()
                     sys.exit()
 
-            self.screen.blit(self.menu_picture, (0, 0), (x % width, height // 2, width, height))
+            self.screen.blit(self.menu_picture, (0, 0), (x % 1200, 400, 1200, 800))
             x += 1
 
             pygame.draw.rect(self.screen, (0, 0, 0), button_level1, border_radius=25, width=10)#LEVEL1
@@ -188,21 +185,21 @@ class Drawing:
                 self.screen.fill((0, 0, 0))
                 text_surface = self.font.render("1 уровень", True, (255, 255, 255))
                 text_rect = text_surface.get_rect()
-                text_rect.center = (width // 2, height // 2)
+                text_rect.center = (600, 400)
                 self.screen.blit(text_surface, text_rect)
                 pygame.display.flip()
                 time.sleep(2)
-                return None
+                return 1
 
             elif self.flag == 2:
                 self.screen.fill((0, 0, 0))
                 text_surface = self.font.render("2 уровень", True, (255, 255, 255))
                 text_rect = text_surface.get_rect()
-                text_rect.center = (width // 2, height // 2)
+                text_rect.center = (600, 400)
                 self.screen.blit(text_surface, text_rect)
                 pygame.display.flip()
                 time.sleep(2)
-                return None
+                return 2
 
             pygame.display.flip()
             self.clock.tick(20)

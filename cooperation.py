@@ -1,7 +1,9 @@
 from rays_geometry import *
 from player_config import *
+from datetime import datetime
+from drawings import *
 from parametres import *
-import math
+import math, json
 import pygame
 from numba import njit
 
@@ -109,13 +111,19 @@ class Interaction:
         pygame.mixer.music.load('sounds/background.mp3')
         pygame.mixer.music.play(-1)
 
-    def check_win(self):  # Выявление, окончена ли игра
+    def checking_win(self):  # Выявление, окончена ли игра
         if not len([obj for obj in self.sprites.list_of_objects if obj.flag == 'npc' and not obj.is_dead]):
             pygame.mixer.music.stop()
             pygame.mixer.music.load('sounds/winSound.mp3')
             pygame.mixer.music.play()
+            record = self.drawing.draw_score()
+            data = {
+                "player": record,
+                "date": str(datetime.now())
+            }
+            json.dump(data, open("data.json", "a", encoding="utf-8"), ensure_ascii=False, indent=4)
             while True:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         exit()
-                self.drawing.win()
+                self.drawing.show_win()

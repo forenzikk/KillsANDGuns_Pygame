@@ -1,32 +1,41 @@
+import pygame, time
 from play_map import *
+
 
 class Player:
     def __init__(self, sprites):
         self.x, self.y = player_position
         self.sprites = sprites
         self.angle = player_angle
-        self.sensitivity = 0.004#чувствительность
-        # collision parameters
-        self.side = 50#размер стороны квадрата, который будет игроком вместо точки
+        self.sensitivity = 0.004  # чувствительность
+        # Параметры коллизий
+        self.side = 50  # размер стороны квадрата, который будет игроком вместо точки
         self.rect = pygame.Rect(*player_position, self.side, self.side)
         # gun
         self.shot = False
+        self.screen = pygame.display.set_mode((1200, 800))
+        self.clock = pygame.time.Clock()
 
     @property
     def get_position(self):
         return (self.x, self.y)
 
-    @property #перенос списка всех коллизий в отдельное св-во (стены + спрайты)
+    # перенос списка всех коллизий в отдельное св-во (стены + спрайты)
+    @property
     def collision_list(self):
-        return collision_walls + [pygame.Rect(*obj.get_position, obj.side, obj.side) for obj in
-                                  self.sprites.list_of_objects if obj.blocked]
+        return collision_walls + [
+            pygame.Rect(
+                *obj.get_position,
+                obj.side,
+                obj.side) for obj in self.sprites.list_of_objects if obj.blocked]
 
     def detect_collision(self, dx, dy):
-        next_rect = self.rect.copy()#копия текущего положения
-        next_rect.move_ip(dx, dy)#переместим на dx, dy
-        hit_indexes = next_rect.collidelistall(self.collision_list)#индекс стен с которыми столкнулся игрок (относительно)
+        next_rect = self.rect.copy()  # копия текущего положения
+        next_rect.move_ip(dx, dy)  # переместим на dx, dy
+        # индекс стен с которыми столкнулся игрок (относительно)
+        hit_indexes = next_rect.collidelistall(self.collision_list)
 
-        if len(hit_indexes):#в зависимости от столкновения ищем сторону, с которой столкнулись
+        if len(hit_indexes):  # в зависимости от столкновения ищем сторону, с которой столкнулись
             delta_x, delta_y = 0, 0
             for hit_index in hit_indexes:
                 hit_rect = self.collision_list[hit_index]
@@ -39,7 +48,7 @@ class Player:
                 else:
                     delta_y += hit_rect.bottom - next_rect.top
 
-            if abs(delta_x - delta_y) < 10:#уперлись в угол
+            if abs(delta_x - delta_y) < 10:  # уперлись в угол
                 dx, dy = 0, 0
             elif delta_x > delta_y:
                 dy = 0
@@ -48,11 +57,38 @@ class Player:
         self.x += dx
         self.y += dy
 
+    def pause(self):
+        paused = True
+        while paused:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        paused = False
+
+                    elif event.key == pygame.K_q:
+                        pygame.quit()
+                        quit()
+            text_font = pygame.font.Font('font/font.ttf', 62)
+            pause_text_1 = text_font.render("Режим паузы", 1, pygame.Color('white'))
+            pause_text_2 = text_font.render("Жми 'c', чтобы продолжить", 1, pygame.Color('white'))
+            text = pygame.Rect(0, 0, 400, 150)
+            text.center = 600, 700
+            self.screen.blit(pause_text_1, (text.centery - 320, text.centery - 500))
+            self.screen.blit(pause_text_2, (text.centery - 580, text.centery - 400))
+
+            pygame.display.update()
+            self.clock.tick(5)
+
     def movement(self):
         self.keys_control()
         self.mouse_control()
-        self.rect.center = self.x, self.y#перемещение квадрата, за который выступает игрок
-        self.angle %= (math.pi * 2)#угол направления игрока
+        # перемещение квадрата, за который выступает игрок
+        self.rect.center = self.x, self.y
+        self.angle %= (math.pi * 2)  # угол направления игрока
 
     def keys_control(self):
         sin_a = math.sin(self.angle)
@@ -64,7 +100,7 @@ class Player:
         if keys[pygame.K_w]:
             dx = player_speed * cos_a
             dy = player_speed * sin_a
-            self.detect_collision(dx, dy)#разрешение движения
+            self.detect_collision(dx, dy)  # разрешение движения
         if keys[pygame.K_s]:
             dx = -player_speed * cos_a
             dy = -player_speed * sin_a
@@ -77,6 +113,8 @@ class Player:
             dx = -player_speed * sin_a
             dy = player_speed * cos_a
             self.detect_collision(dx, dy)
+        if keys[pygame.K_p]:
+            self.pause()
 
         if keys[pygame.K_LEFT]:
             self.angle -= 0.02
@@ -92,6 +130,9 @@ class Player:
 
     def mouse_control(self):
         if pygame.mouse.get_focused():
-            difference = pygame.mouse.get_pos()[0] - (width // 2)#разница координат курсора и середины окна
-            pygame.mouse.set_pos(((width // 2), (height // 2)))#переносим указатель в центр
-            self.angle += difference * self.sensitivity#прибавляем к нему ту самую разницу + учет чувствительности
+            # разница координат курсора и середины окна
+            difference = pygame.mouse.get_pos()[0] - 600
+            # переносим указатель в центр
+            pygame.mouse.set_pos((600, 400))
+            # прибавляем к нему ту самую разницу + учет чувствительности
+            self.angle += difference * self.sensitivity
