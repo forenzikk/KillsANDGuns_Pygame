@@ -1,5 +1,6 @@
 import pygame, time
 from play_map import *
+from drawings import *
 
 
 class Player:

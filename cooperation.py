@@ -3,12 +3,20 @@ from player_config import *
 from datetime import datetime
 from drawings import *
 from parametres import *
-import math, json
+import math
+import json
 import pygame
 from numba import njit
 
+
 @njit(fastmath=True, cache=True)
-def ray_casting_npc_player(npc_x, npc_y, blocked_walls, world_map, player_position):#находится ли игрок в поле видимости спрйта
+# находится ли игрок в поле видимости спрйта
+def ray_casting_npc_player(
+        npc_x,
+        npc_y,
+        blocked_walls,
+        world_map,
+        player_position):
     ox, oy = player_position
     xm, ym = mapping(ox, oy)
     delta_x, delta_y = ox - npc_x, oy - npc_y
@@ -65,15 +73,20 @@ class Interaction:
         self.drawing = drawing
         self.pain_sound = pygame.mixer.Sound('sounds/pain.mp3')
 
-
-    def interaction_objects(self):#если есть живой объект в области выстрела, то изобразить его смерть
+    # если есть живой объект в области выстрела, то изобразить его смерть
+    def interaction_objects(self):
         if self.player.shot and self.drawing.shot_animation_trigger:
-            for obj in sorted(self.sprites.list_of_objects, key=lambda obj: obj.distance_to_sprite):
+            for obj in sorted(
+                    self.sprites.list_of_objects,
+                    key=lambda obj: obj.distance_to_sprite):
                 if obj.is_on_fire[1]:
                     if obj.is_dead != 'immortal' and not obj.is_dead:
-                        if ray_casting_npc_player(obj.x, obj.y,
-                                                  self.sprites.blocked_walls,
-                                                  world_map, self.player.get_position):
+                        if ray_casting_npc_player(
+                                obj.x,
+                                obj.y,
+                                self.sprites.blocked_walls,
+                                world_map,
+                                self.player.get_position):
                             if obj.flag == 'npc':
                                 self.pain_sound.play()
                             obj.is_dead = True
@@ -81,7 +94,7 @@ class Interaction:
                             self.drawing.shot_animation_trigger = False
                     break
 
-    def npc_action(self):#взаимодействие npc при прямой видимости с игроком
+    def npc_action(self):  # взаимодействие npc при прямой видимости с игроком
         for obj in self.sprites.list_of_objects:
             if obj.flag == 'npc' and not obj.is_dead:
                 if ray_casting_npc_player(obj.x, obj.y,
@@ -112,7 +125,8 @@ class Interaction:
         pygame.mixer.music.play(-1)
 
     def checking_win(self):  # Выявление, окончена ли игра
-        if not len([obj for obj in self.sprites.list_of_objects if obj.flag == 'npc' and not obj.is_dead]):
+        if not len([obj for obj in self.sprites.list_of_objects if obj.flag ==
+                   'npc' and not obj.is_dead]):
             pygame.mixer.music.stop()
             pygame.mixer.music.load('sounds/winSound.mp3')
             pygame.mixer.music.play()
@@ -121,7 +135,14 @@ class Interaction:
                 "player": record,
                 "date": str(datetime.now())
             }
-            json.dump(data, open("data.json", "a", encoding="utf-8"), ensure_ascii=False, indent=4)
+            json.dump(
+                data,
+                open(
+                    "data.json",
+                    "a",
+                    encoding="utf-8"),
+                ensure_ascii=False,
+                indent=4)
             while True:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:

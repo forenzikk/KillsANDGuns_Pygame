@@ -87,18 +87,177 @@ class Sprites:
         }
 
         self.list_of_objects = [  # randoms
-            SpriteObject(self.sprite_parameters['bochka'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['bochka'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['pumpkin'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['death'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['death'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
-            SpriteObject(self.sprite_parameters['enemy1'], (uniform(1, 9), uniform(1, 12))),
+            SpriteObject(
+                self.sprite_parameters['bochka'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['bochka'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['pumpkin'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+        ]
+
+        self.list_of_objects_2 = [  # randoms
+            SpriteObject(
+                self.sprite_parameters['bochka'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['bochka'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['pumpkin'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['pumpkin'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['pumpkin'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['pumpkin'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['pumpkin'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['death'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
+            SpriteObject(
+                self.sprite_parameters['enemy1'], (uniform(
+                    1, 9), uniform(
+                    1, 12))),
         ]
 
     @property
@@ -148,8 +307,8 @@ class SpriteObject:
         if self.viewing_angles:
             if len(self.object) == 8:
                 # сдвиг угла обзора спрайтов
-                self.sprite_angles = [frozenset(range(338,361))
-                                      | frozenset(range(0,23))] + [frozenset(range(i,i + 45)) for i in range(23,338,45)]
+                self.sprite_angles = [frozenset(range(338, 361)) | frozenset(
+                    range(0, 23))] + [frozenset(range(i, i + 45)) for i in range(23, 338, 45)]
             else:
                 self.sprite_angles = [frozenset(range(348, 361)) | frozenset(
                     range(0, 11))] + [frozenset(range(i, i + 23)) for i in range(11, 348, 23)]

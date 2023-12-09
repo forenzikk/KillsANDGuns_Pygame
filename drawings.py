@@ -1,8 +1,14 @@
+import levels
 from sprites_obj import *
 from parametres import *
 from random import randrange, randint
 from rays_geometry import *
-import sys, time
+import sys, time, json
+from parametres import *
+import pygame
+from numba.core import types
+from numba.typed import Dict
+from numba import int32
 
 class Drawing:
     def __init__(self, screen, screen_map, player, clock):
@@ -181,7 +187,16 @@ class Drawing:
                     pygame.quit()
                     sys.exit()
 
+            pygame.display.flip()
+            self.clock.tick(20)
+
             if self.flag == 1:
+                with open('levels.json', 'r') as file:
+                    data = json.load(file)
+                    matrix = data["map_1"]
+                    matrix1 = dict()
+                    matrix1["map"] = matrix
+                    json.dump(matrix1, open('current_lvl.json', 'w', encoding='utf-8'))
                 self.screen.fill((0, 0, 0))
                 text_surface = self.font.render("1 уровень", True, (255, 255, 255))
                 text_rect = text_surface.get_rect()
@@ -189,9 +204,15 @@ class Drawing:
                 self.screen.blit(text_surface, text_rect)
                 pygame.display.flip()
                 time.sleep(2)
-                return 1
+                return True
 
             elif self.flag == 2:
+                with open('levels.json', 'r') as file:
+                    data = json.load(file)
+                    matrix = data["map_2"]
+                    matrix2 = dict()
+                    matrix2["map"] = matrix
+                    json.dump(matrix2, open('current_lvl.json', 'w', encoding='utf-8'))
                 self.screen.fill((0, 0, 0))
                 text_surface = self.font.render("2 уровень", True, (255, 255, 255))
                 text_rect = text_surface.get_rect()
@@ -199,7 +220,28 @@ class Drawing:
                 self.screen.blit(text_surface, text_rect)
                 pygame.display.flip()
                 time.sleep(2)
-                return 2
+                return False
 
-            pygame.display.flip()
-            self.clock.tick(20)
+
+with open('current_lvl.json', 'r') as file:
+    data = json.load(file)
+    map_for_level = data["map"]
+
+# переменные для правильного вычисления луча в rays_geometry
+width_of_world = len(map_for_level[0]) * tile
+height_of_world = len(map_for_level) * tile
+world_map = Dict.empty(key_type=types.UniTuple(int32, 2), value_type=int32)
+mini_map = set()
+collision_walls = []  # экземляр класса Rect
+for j, row in enumerate(
+        map_for_level):  # координаты строк - x, координаты списка - у
+    for i, char in enumerate(row):
+        if char:
+            # заносим в множество только стены
+            mini_map.add((i * map_tile, j * map_tile))
+            # квадрат со стороной размера нашей стены
+            collision_walls.append(pygame.Rect(i * tile, j * tile, tile, tile))
+            if char == 1:
+                world_map[(i * tile, j * tile)] = 1
+            elif char == 2:
+                world_map[(i * tile, j * tile)] = 2

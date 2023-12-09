@@ -1,5 +1,5 @@
 import math
-
+from drawings import *
 from play_map import *
 from numba import njit
 

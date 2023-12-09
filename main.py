@@ -32,7 +32,7 @@ player = Player(sprites)
 drawing = Drawing(screen, screen_map, player, clock)
 interaction = Interaction(player, sprites, drawing)
 
-drawing.menu()
+menu = drawing.menu()
 interaction.musical_playing()
 
 write_text("Добро пожаловать в настоящий ад, мой друг! Посмотрим, что ты можешь")
@@ -42,8 +42,14 @@ while True:
     drawing.background(player.angle)
     walls, wall_shot = ray_casting_walls(player, drawing.textures)
     # передаем список параметров стен и список вычисленных параметров спрайтов
-    drawing.world(walls + [obj.object_locate(player)
-                  for obj in sprites.list_of_objects])
+    if menu:
+        drawing.world(walls + [obj.object_locate(player)
+                      for obj in sprites.list_of_objects])
+    else:
+        sprites.list_of_objects = sprites.list_of_objects_2
+        drawing.world(walls + [obj.object_locate(player)
+                      for obj in sprites.list_of_objects])
+
     drawing.mini_map(player)
     drawing.player_weapon([wall_shot, sprites.sprite_shot])
     drawing.draw_score()
